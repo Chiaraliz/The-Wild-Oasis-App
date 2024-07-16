@@ -70,7 +70,7 @@ const MenuContext = createContext();
 function Menus({ children }) {
   const [openId, setOpenId] = useState("");
   const [position, setPosition] = useState(null);
-  const open = setOpenId;
+  const open = (id) => setOpenId(id);
   const close = () => setOpenId("");
   return (
     <MenuContext.Provider
@@ -90,7 +90,12 @@ function Toggle({ id }) {
       x: window.innerWidth - rect.width - rect.x,
       y: rect.y + rect.height + 8,
     });
-    id === "" || id !== openId ? open(id) : close();
+
+    if (openId === "" || id !== openId) {
+      open(id);
+    } else {
+      close();
+    }
   }
 
   return (
@@ -102,8 +107,9 @@ function Toggle({ id }) {
 
 function List({ id, children }) {
   const { openId, position, close } = useContext(MenuContext);
+
   const ref = useOutsideClick(close);
-  if (id !== openId) return null;
+  if (openId !== id) return null;
   return createPortal(
     <StyledList ref={ref} position={position}>
       {children}
